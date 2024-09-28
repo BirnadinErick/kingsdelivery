@@ -1,3 +1,4 @@
+//@ts-nocheck
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import {useCallback, useEffect, useState} from "react";

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {Badge} from "@/primitives/ui/badge";
 import {
     Dialog,

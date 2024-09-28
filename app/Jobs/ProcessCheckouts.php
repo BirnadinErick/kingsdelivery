@@ -8,15 +8,11 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Variation;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Log;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
-use function Psy\debug;
 
 class ProcessCheckouts implements ShouldQueue
 {
@@ -38,7 +34,7 @@ class ProcessCheckouts implements ShouldQueue
         $order_total_pences = 0;
         $mail_orders = [];
 
-        $stripe = new StripeClient(env('STRIPE_SECRET_KEY', ''));
+        $stripe = new StripeClient(config('services.stripe.secret', ''));
         $session = $stripe->checkout->sessions->retrieve($this->checkout->session_id);
         $line_items = $stripe->checkout->sessions->allLineItems($this->checkout->session_id);
 

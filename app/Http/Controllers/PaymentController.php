@@ -7,18 +7,17 @@ use App\Models\Category;
 use App\Models\Checkout;
 use App\Models\Cuisine;
 use Exception;
-use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Log;
 use Stripe\StripeClient;
 
 class PaymentController extends Controller
 {
     public function checkout(Request $request)
     {
-        $stripe = new StripeClient(env('STRIPE_SECRET_KEY', ''));
-        $app_domain = env('APP_URL', 'https://kingsflavour.com');
+        $stripe = new StripeClient(config('services.stripe.secret', ''));
+        $app_domain = config('app.url', 'https://kingsflavour.com');
 
         // TODO!: validate we have pids
         $pids = $request->input('pids', '');
@@ -61,7 +60,7 @@ class PaymentController extends Controller
             ]);
         }
 
-        $stripe = new StripeClient(env('STRIPE_SECRET_KEY', ''));
+        $stripe = new StripeClient(config('services.stripe.secret', ''));
         $session = $stripe->checkout->sessions->retrieve($sess_id);
 
         return Inertia::render('PostcheckoutSuccess', [
@@ -73,8 +72,8 @@ class PaymentController extends Controller
     {
         $body = $request->getContent();
         $server_signature = $request->header('Stripe-Signature');
-        $endpoint_secret = env('STRIPE_ENDPOINT_SECRET', 'endpoint_secret not found');
-        $stripe_key = env('STRIPE_SECRET_KEY', 'stripe_secret');
+        $endpoint_secret = config('services.stripe.endpoint_key', 'endpoint_secret not found');
+        $stripe_key = config('services.stripe.secret', 'stripe_secret');
 
         try {
             $event = \Stripe\Webhook::constructEvent($body, $server_signature, $endpoint_secret);
@@ -94,15 +93,6 @@ class PaymentController extends Controller
         if ($session->payment_status === 'unpaid') {
             return \response()->json(['msg' => 'failed to pay'], 500);
         }
-
-
-        /*
-         * checkout (delivery)
-         * - address / phone number / email
-         * - items
-         * - session_id
-         * - status
-         */
 
         $checkout = Checkout::firstOrCreate([
           'session_id' => $session_id

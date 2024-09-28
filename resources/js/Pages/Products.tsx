@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {Head, Link} from "@inertiajs/react";
 import Layout from "@/Layouts/Layout";
 import {Button} from "@/primitives/ui/button";

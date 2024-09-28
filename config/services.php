@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET_KEY', ''),
+        'endpoint_key' => env('STRIPE_ENDPOINT_SECRET'),
+    ],
+
+    'google_api' => [
+        'geocoding' => env('GOOGLE_MAPS_API_KEY', '')
+    ]
+
 ];
