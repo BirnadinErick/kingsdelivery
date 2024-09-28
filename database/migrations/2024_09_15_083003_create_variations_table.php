@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('variations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('cuisine_id');
             $table->string('label');
             $table->string('price');
             $table->integer('time_to_prep'); // time in seconds
             $table->string('price_id');
 
             $table->foreign('product_id')->references('product_id')->on('products')->onDelete('cascade');
+            $table->foreign('cuisine_id')->references('cuisine_id')->on('cuisines')->onDelete('cascade');
 
             $table->timestamps();
         });
