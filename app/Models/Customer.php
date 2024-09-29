@@ -15,8 +15,8 @@ class Customer extends Model
 
     public static function geocodeAddress($address): ?string
     {
-        $apiKey = env('GOOGLE_MAPS_API_KEY', '');
-        $formattedAddress = urlencode("{$address['line1']},{$address['postal_code']},{$address['city']},{$address['country']}");
+        $apiKey = config('services.google_api.geocoding', '');
+        $formattedAddress = urlencode("{$address['line1']},{$address['line2']},{$address['postal_code']},{$address['city']},{$address['country']}");
 
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address={$formattedAddress}&key={$apiKey}";
         $response = Http::get($url);

@@ -43,6 +43,8 @@ class VariationsSeeder extends Seeder
                     'price_id' => Str::uuid()->toString(),
                     'created_at' => now(),
                     'updated_at' => now(),
+                    'cuisine_id' => 1,
+                    'product_catalog_id' => ''
                 ]);
             }
         }

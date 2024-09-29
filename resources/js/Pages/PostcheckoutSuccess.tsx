@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {Head, Link} from '@inertiajs/react';
 import {PageProps} from '@/types';
 import Layout from "@/Layouts/Layout";
@@ -94,8 +95,6 @@ export default function PostcheckoutSuccess({
     categories: Array<any>,
     details: any
 }>) {
-
-    console.log(details)
     return (
         <>
             <Head title="Post Checkout | Failed Transaction"/>

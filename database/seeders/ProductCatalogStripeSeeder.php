@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Variation;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
 class ProductCatalogStripeSeeder extends Seeder
@@ -13,10 +14,11 @@ class ProductCatalogStripeSeeder extends Seeder
      */
     public function run(): void
     {
-        $stripe_secret = env('STRIPE_SECRET_KEY', '');
+        $stripe_secret = config('STRIPE_SECRET_KEY', '');
+        Log::debug($stripe_secret);
         $stripe = new StripeClient($stripe_secret);
 
-        // clean up catelog
+        // clean up catalog
         $all_products = $stripe->products->all();
         foreach ($all_products['data'] as $p) {
             $stripe->products->delete($p['id']);
