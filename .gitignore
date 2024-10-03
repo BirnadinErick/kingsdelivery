@@ -20,3 +20,4 @@ yarn-error.log
 /.vscode
 
 *.csv
+store_app_test/
