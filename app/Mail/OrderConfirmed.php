@@ -29,7 +29,7 @@ class OrderConfirmed extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('info@kingsdelivery.com', 'Kings Delivery'),
+            from: new Address('info@kingsflavour.com', 'Kings Delivery'),
             subject: 'Order Confirmation from King\'s Delivery',
         );
     }

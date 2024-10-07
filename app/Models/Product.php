@@ -12,6 +12,7 @@ class Product extends Model
     use HasFactory;
 
     protected $primaryKey = 'product_id';
+    protected $fillable = ['name', 'description', 'image', 'price'];
 
     public function category(): BelongsTo
     {
