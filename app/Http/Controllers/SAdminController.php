@@ -54,8 +54,6 @@ class SAdminController extends Controller
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $filename = time() . '_' . $file->getClientOriginalName();
-/*                $imagePath = $file->storeAs('public/products', $filename);
-                $productData['image'] = Storage::url($imagePath);*/
                 $file->move(public_path('products'), $filename);
                 $productData['image'] = '/products/' . $filename;
             }
