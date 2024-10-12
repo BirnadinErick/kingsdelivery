@@ -21,3 +21,5 @@ yarn-error.log
 
 *.csv
 store_app_test/
+
+/public/products
