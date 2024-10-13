@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Cuisine;
 use App\Models\Customer;
 use App\Models\Product;
@@ -27,8 +28,10 @@ class SAdminController extends Controller
 
     public function products()
     {
-        $products = Product::all();
-        return Inertia::render('SAdminProducts', ['products' => $products]);
+        $products = Product::with('category')->with('cuisine')->get();
+        $categories = Category::all();
+        $cuisines = Cuisine::all();
+        return Inertia::render('SAdminProducts', ['products' => $products, 'categories'=>$categories, 'cuisines'=>$cuisines]);
     }
 
     public function products_store(Request $request)
@@ -39,6 +42,7 @@ class SAdminController extends Controller
             'image' => 'file|image|max:2048', // 2MB Max
             'description' => 'nullable|string|max:1000',
             'price' => 'required|numeric|min:0.01',
+            'category' => 'sometimes|exists:categories,category_id'
         ]);
 
         try {
@@ -46,9 +50,9 @@ class SAdminController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'price' => $request->price,
-                // Set default values for other required fields if not provided
                 'time_to_prep' => $request->time_to_prep ?? 0,
                 'veg' => $request->veg ?? false,
+                'category_id' => $request->category
             ];
 
             if ($request->hasFile('image')) {
@@ -63,11 +67,7 @@ class SAdminController extends Controller
                 $productData
             );
 
-            Log::info('Product created', [
-                'product_id' => $product->product_id,
-                'name' => $product->name,
-                'image' => $product->image,
-            ]);
+            Log::info('Product created', ['product_id' => $product->product_id,]);
 
             return response()->json([
                 'message' => 'Product created successfully',

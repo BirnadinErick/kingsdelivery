@@ -12,6 +12,15 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "@/components/ui/input";
 import {useEffect, useState} from "react";
 import {Textarea} from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import AdminLayout from "@/Layouts/AdminLayout";
+
 
 function ProductImage({url}: { url: string }) {
     if (!url) {
@@ -32,9 +41,10 @@ const formSchema = z.object({
     image: z.instanceof(File).optional(),
     description: z.string().max(1000),
     price: z.coerce.number().positive().multipleOf(0.01),
+    category: z.string(),
 })
 
-export default function SAdminProducts({auth, products}: PageProps) {
+export default function SAdminProducts({auth, products, cuisines, categories}: PageProps) {
     const [selectedProduct, setSelectedProduct] = useState(products[0]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -46,6 +56,7 @@ export default function SAdminProducts({auth, products}: PageProps) {
             image: undefined,
             description: selectedProduct?.description || "",
             price: parseFloat(selectedProduct?.price) || 0,
+            category: selectedProduct.category_id.toString(),
         },
     });
 
@@ -56,6 +67,7 @@ export default function SAdminProducts({auth, products}: PageProps) {
             formData.append('name', values.name);
             formData.append('description', values.description || '');
             formData.append('price', values.price.toString());
+            formData.append('category', values.category);
             if (values.image) {
                 formData.append('image', values.image);
             }
@@ -78,24 +90,23 @@ export default function SAdminProducts({auth, products}: PageProps) {
 
 
     useEffect(() => {
+        console.log(selectedProduct)
         form.reset({
             product_id: selectedProduct?.product_id || '',
             name: selectedProduct?.name || "",
             description: selectedProduct?.description || "",
             price: selectedProduct?.price || 0,
+            category: selectedProduct?.category.category_id.toString() || '',
         });
     }, [selectedProduct, form]);
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Manage Products</h2>}
-        >
+        <AdminLayout>
             <Head title="Super Admin Products Management| King's Flavour"/>
             <p className="block lg:hidden">please visit this site in a wider screen</p>
 
             <main className="hidden lg:flex">
-                <ScrollArea className="h-screen w-[350px] flex-none  ">
+                <ScrollArea className="h-screen w-[350px] flex-none">
                     <ul className="list-disc">
                         {products.map((p, idx) => <li key={idx}>
                             <div
@@ -131,6 +142,40 @@ export default function SAdminProducts({auth, products}: PageProps) {
                                     </FormItem>
                                 )}
                             />
+
+                            <div className="flex items-start justify-start space-x-8">
+                                <FormField
+                                    control={form.control}
+                                    name="category"
+                                    render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel>Product Category</FormLabel>
+                                            <FormControl>
+                                                <Select
+                                                    value={field.value}
+                                                    onValueChange={(value) => field.onChange(value)}>
+                                                    <SelectTrigger className="w-[180px]">
+                                                        <SelectValue placeholder="Select a category"/>
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {
+                                                            categories.map((c, idx) => <SelectItem
+                                                                key={idx}
+                                                                value={c.category_id.toString()}>
+                                                                {c.name}
+                                                            </SelectItem>)
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormDescription>
+                                                Category this product belongs to.
+                                            </FormDescription>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <div className="flex items-start justify-start w-3/5 space-x-12">
                                 <ProductImage url={imagePreview || selectedProduct.image}/>
                                 <FormField
@@ -219,6 +264,6 @@ export default function SAdminProducts({auth, products}: PageProps) {
                 </div>
             </main>
 
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }
